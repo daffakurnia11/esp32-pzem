@@ -2,8 +2,11 @@
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 #include <PZEM004Tv30.h>
+#include <ArduinoJson.h> // Include ArduinoJson library
+#include <HTTPClient.h>
 #include "wifi_setup.h"  // Include WiFi setup header
 #include "pzem_reader.h" // Include PZEM reader header
+#include "api_request.h" // Include API request header
 
 #define RX1 16
 #define TX1 17
@@ -40,9 +43,36 @@ void loop()
   lcd.clear();
   lcd.setCursor(0, 0);
   lcd.print("Status: ");
-  pzemReader(pzem1, RX1, TX1, "1", 1, lcd); // Pass lcd to the reader function
-  pzemReader(pzem2, RX2, TX2, "2", 2, lcd); // Pass lcd to the reader function
-  pzemReader(pzem3, RX3, TX3, "3", 3, lcd); // Pass lcd to the reader function
+
+  StaticJsonDocument<512> doc; // Adjust size based on your needs
+  JsonArray sensors = doc.createNestedArray("se");
+
+  String sensorReader1 = pzemReader(pzem1, RX1, TX1, "1", 1, lcd); // Pass lcd to the reader function
+  String sensorReader2 = pzemReader(pzem2, RX2, TX2, "2", 2, lcd); // Pass lcd to the reader function
+  String sensorReader3 = pzemReader(pzem3, RX3, TX3, "3", 3, lcd); // Pass lcd to the reader function
+
+  if (!sensorReader1.isEmpty() && !sensorReader2.isEmpty() && !sensorReader3.isEmpty())
+  {
+    JsonObject sensorObj1 = sensors.createNestedObject();
+    StaticJsonDocument<256> tempDoc1;
+    deserializeJson(tempDoc1, sensorReader1);
+    sensorObj1.set(tempDoc1.as<JsonObject>());
+
+    JsonObject sensorObj2 = sensors.createNestedObject();
+    StaticJsonDocument<256> tempDoc2;
+    deserializeJson(tempDoc2, sensorReader2);
+    sensorObj2.set(tempDoc2.as<JsonObject>());
+
+    JsonObject sensorObj3 = sensors.createNestedObject();
+    StaticJsonDocument<256> tempDoc3;
+    deserializeJson(tempDoc3, sensorReader3);
+    sensorObj3.set(tempDoc3.as<JsonObject>());
+
+    String jsonData;
+    serializeJson(doc, jsonData);
+
+    sendSensorData(jsonData, lcd);
+  }
 
   delay(3000); // Delay for readability
 }
