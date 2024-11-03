@@ -44,7 +44,7 @@ void loop()
   lcd.setCursor(0, 0);
   lcd.print("Status: ");
 
-  StaticJsonDocument<512> doc; // Adjust size based on your needs
+  StaticJsonDocument<1024> doc; // Adjust size based on your needs
   JsonArray sensors = doc.createNestedArray("se");
 
   String sensorReader1 = pzemReader(pzem1, RX1, TX1, "1", 1, lcd); // Pass lcd to the reader function
