@@ -36,13 +36,21 @@ void setup()
   wifiSetup(lcd, ssid, password); // Pass lcd and credentials to the function
 
   delay(2000);
+  lcd.clear();
 }
 
 void loop()
 {
-  lcd.clear();
   lcd.setCursor(0, 0);
   lcd.print("Status: ");
+  lcd.setCursor(0, 1);
+  lcd.print("                    ");
+
+  lcd.setCursor(-4, 2);
+  lcd.print("                    ");
+
+  lcd.setCursor(-4, 3);
+  lcd.print("                    ");
 
   StaticJsonDocument<1024> doc; // Adjust size based on your needs
   JsonArray sensors = doc.createNestedArray("se");
@@ -74,5 +82,5 @@ void loop()
     sendSensorData(jsonData, lcd);
   }
 
-  delay(3000); // Delay for readability
+  delay(500); // Delay for readability
 }

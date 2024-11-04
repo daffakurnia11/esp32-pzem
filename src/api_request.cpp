@@ -1,6 +1,9 @@
 #include <HTTPClient.h>
 #include "wifi_setup.h" // Include WiFi setup header
 
+// String apiUrl = "https://mf745t99-8000.asse.devtunnels.ms/api/sensors/bulk";
+String apiUrl = "https://fp-backend.finalproject-be.dafkur.com/api/v1/sensors";
+
 // Function to send the HTTP POST request
 void sendSensorData(const String &jsonData, LiquidCrystal_I2C &lcd)
 {
@@ -8,7 +11,7 @@ void sendSensorData(const String &jsonData, LiquidCrystal_I2C &lcd)
   if (WiFi.status() == WL_CONNECTED)
   {
     HTTPClient http;
-    http.begin("https://fp-backend.finalproject-be.dafkur.com/api/v1/sensors");
+    http.begin(apiUrl);
     http.addHeader("Content-Type", "application/json"); // Specify content-type header
 
     Serial.print("Status API Request : "); // Print return code
